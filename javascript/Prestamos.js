@@ -1,67 +1,85 @@
 // Constantes y arrays
 const tasaInteres = 0.1;
-const cuotasDisponibles = [3, 6, 12,];
 
-//solicitar datos al usuario
-function solicitarDatos() {
-  const nombre = prompt("Ingrese su nombre y apellido:");
-  const monto = parseFloat(prompt("Ingrese el monto del préstamo que desea:"));
-  return { nombre, monto };
+// localStorage
+const historialPrestamos = JSON.parse(localStorage.getItem('historialPrestamos')) || [];
+
+// DOM
+const formularioPrestamo = document.getElementById('prestamo-form');
+const inputNombre = document.getElementById('nombre');
+const inputMonto = document.getElementById('monto');
+const selectCuotas = document.getElementById('cuotas');
+const divResultado = document.getElementById('resultado-prestamo');
+
+// --- Funciones del simulador ---
+
+/**
+ * Calcula el préstamo y muestra el resultado en el DOM.
+ * @param {string} nombre - Nombre del solicitante.
+ * @param {number} monto - Monto del préstamo.
+ * @param {number} cuotas - Número de cuotas.
+ */
+function calcularYMostrarPrestamo(nombre, monto, cuotas) {
+    const interesTotal = monto * tasaInteres * cuotas;
+    const totalAPagar = monto + interesTotal;
+    const cuotaMensual = totalAPagar / cuotas;
+
+    // Crea un nuevo objeto de préstamo
+    const nuevoPrestamo = {
+        nombre: nombre,
+        monto: monto,
+        cuotas: cuotas,
+        totalAPagar: totalAPagar.toFixed(2),
+        cuotaMensual: cuotaMensual.toFixed(2),
+        fecha: new Date().toLocaleString()
+    };
+
+    // Agrega el nuevo préstamo al historial
+    historialPrestamos.push(nuevoPrestamo);
+
+    // Guarda el historial actualizado en localStorage
+    guardarHistorial();
+
+    // Muestra el resultado en la página
+    divResultado.innerHTML = `
+        <p><strong>Préstamo para:</strong> ${nombre}</p>
+        <p><strong>Monto solicitado:</strong> $${monto.toFixed(2)}</p>
+        <p><strong>Cuotas:</strong> ${cuotas}</p>
+        <p><strong>Interés total:</strong> $${interesTotal.toFixed(2)}</p>
+        <p><strong>Total a pagar:</strong> $${totalAPagar.toFixed(2)}</p>
+        <p><strong>Valor de cada cuota:</strong> $${cuotaMensual.toFixed(2)}</p>
+    `;
 }
 
-// elegir cuotas
-function elegirCuotas() {
-  let mensaje = "Seleccione la cantidad de cuotas:\n";
-  cuotasDisponibles.forEach((cuota, i) => {
-    mensaje += `${i + 1}. ${cuota} cuotas\n`;
-  });
-
-  let opcion = parseInt(prompt(mensaje));
-  while (isNaN(opcion) || opcion < 1 || opcion > cuotasDisponibles.length) {
-    opcion = parseInt(prompt("Opción no válida. Intente nuevamente:\n" + mensaje));
-  }
-
-  return cuotasDisponibles[opcion - 1];
+/**
+ * Guarda el historial de préstamos en el almacenamiento local.
+ */
+function guardarHistorial() {
+    localStorage.setItem('historialPrestamos', JSON.stringify(historialPrestamos));
+    console.log('Historial de préstamos guardado:', historialPrestamos);
 }
 
-// calcular total e informar
-function calcularPrestamo(nombre, monto, cuotas) {
-  const interesTotal = monto * tasaInteres * cuotas;
-  const totalPagar = monto + interesTotal;
-  const cuotaMensual = totalPagar / cuotas;
-
-  alert(`Préstamo confirmado para ${nombre}.\n` +
-        `Monto solicitado: $${monto.toFixed(2)}\n` +
-        `Cuotas: ${cuotas}\n` +
-        `Interés total: $${interesTotal.toFixed(2)}\n` +
-        `Total a pagar: $${totalPagar.toFixed(2)}\n` +
-        `Valor de cada cuota: $${cuotaMensual.toFixed(2)}`);
-
-  console.log("---- DETALLE DEL PRÉSTAMO ----");
-  console.log("Cliente:", nombre);
-  console.log("Monto solicitado:", monto);
-  console.log("Cuotas:", cuotas);
-  console.log("Interés total:", interesTotal);
-  console.log("Total a pagar:", totalPagar);
-  console.log("Valor de cada cuota:", cuotaMensual);
+/**
+ * Limpia los campos del formulario.
+ */
+function limpiarFormulario() {
+    formularioPrestamo.reset();
 }
 
-//Principal
-function iniciarSimulador() {
-  alert("Bienvenido al simulador de préstamos.");
-  let continuar = true;
+// --- Event Listeners ---
 
-  while (continuar) {
-    const { nombre, monto } = solicitarDatos();
-    const cuotas = elegirCuotas();
-    calcularPrestamo(nombre, monto, cuotas);
+formularioPrestamo.addEventListener('submit', function(evento) {
+    // Evita que el formulario se envíe y recargue la página
+    evento.preventDefault();
 
-    continuar = confirm("¿Desea simular otro préstamo?");
-  }
+    // Obtiene los valores de los campos del formulario
+    const nombre = inputNombre.value;
+    const monto = parseFloat(inputMonto.value);
+    const cuotas = parseInt(selectCuotas.value);
 
-  alert("Gracias por utilizar el simulador.");
-}
+    // función para calcular y mostrar el préstamo
+    calcularYMostrarPrestamo(nombre, monto, cuotas);
 
-// Iniciar
-iniciarSimulador();
-
+    // Limpia el formulario
+    limpiarFormulario();
+});
