@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Préstamos</title>
     <link rel="stylesheet" href="../css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../javascript/Prestamos.js" defer></script>
+    <script src="../javascript/historial.js" defer></script>
 </head>
-<body class ="body">
+<body class="body">
 
     <header>
-        <h1>Simulador de Préstamos</h1>
+        <h1 class = "h1">Mi Simulador de Préstamos</h1>
     </header>
 
     <main class="main">
         <section class="form-section">
-            <h2>Datos del Préstamo</h2>
+            <h2>Calcula tu Préstamo</h2>
             <form id="prestamo-form">
                 <div class="form-grupo">
                     <label for="nombre">Nombre y Apellido:</label>
@@ -33,20 +35,32 @@
                         <option value="12">12 Cuotas</option>
                     </select>
                 </div>
-                <button type="submit" class="boton">Calcular Préstamo</button>
+                <button type="submit" class="boton">Calcular</button>
             </form>
         </section>
 
         <section class="resultados-section">
-            <h2 class="deta-prestamo">Detalle del Préstamo</h2>
+            <h2 class="deta-prestamo"> Préstamo solicitado</h2>
             <div id="resultado-prestamo" class="resultado-box">
                 <p>Ingresa los datos para ver el total del prestamo.</p>
             </div>
         </section>
+
+        <section class="historial-section">
+            <h2>Historial</h2>
+            <div id="historial-prestamos">
+                <p>El historial estara aca.</p>
+            </div>
+            <button id="Borrar-historial" class="boton-Borrar">Borrar Historial</button>
+        </section>
     </main>
+
     <footer>
-        <p>&copy; 2025 Simulador de Préstamos</p>
-        <p>HTML y CSS hecho con lo aprendido en el curso de desarrollo web</p>
+        <p>HTML y CSS hecho con lo aprendido en el curso de Desarrollo Web</p>
+        <p>&copy; 2025 Mi Proyecto JS</p>
+        
     </footer>
+
+    
 </body>
 </html>
